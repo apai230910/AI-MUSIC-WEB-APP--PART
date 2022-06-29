@@ -14,7 +14,9 @@ scoreLeftWrist = 0;
 
 scoreRightWrist = 0;
 
-status_of_song = "";
+status_of_song_1 = "";
+
+status_of_song_2 = "";
 
 function preload() {
 
@@ -26,7 +28,7 @@ function preload() {
 
 function setup() {
 
- canvas = createCanvas(600 ,500);
+ canvas = createCanvas(600,500);
 
  canvas.center();
 
@@ -34,13 +36,13 @@ function setup() {
 
  video.hide();
  
- poseNet = ml5.poseNet( video , modalLoaded);
+ poseNet = ml5.poseNet( video , modelLoaded);
 
  poseNet.on( "pose", gotPoses );
 
 }
 
-function modalLoaded() {
+function modelLoaded() {
 
  console.log("PoseNet Intialized");
 
@@ -53,6 +55,8 @@ function gotPoses(results) {
  console.log(results);
 
  scoreLeftWrist = results[0].pose.keypoints[9].score;
+
+ scoreRightWrist = results[0].pose.keypoints[10].score;
 
  leftWristX = results[0].pose.leftWrist.x;
 
@@ -70,24 +74,44 @@ function draw() {
 
  image(video,0 ,0 , 600 ,500);
 
+ status_of_song_1 = "false";
+
+ status_of_song_2 = "false";
+ 
  fill("#FF0000");
 
  stroke("#FF0000");
 
  if(scoreLeftWrist > 0.2) {
 
+ circle( leftWristX , leftWristY , 20);
+
  song2.isPlaying(false);
-  
- song1.isPlaying(true);
+
+ }
+
+ if(status_of_song_1  == "false") {
+
+  song1.isPlaying(true);
+
+  document.getElementById("song_name").innerHTML = "Song Name = Harry Potter";
 
  }
  
- if(scoreLeftWrist > 0.2) {
+ if(scoreRightWrist > 0.2) {
 
- song1.isPlaying(false);
-  
- song2.isPlaying(true);
-
- }
+  circle( leftWristX , leftWristY , 20);
+ 
+  song1.isPlaying(false);
+ 
+  }
+ 
+  if(status_of_song_2  == "false") {
+ 
+   song2.isPlaying(true);
+ 
+   document.getElementById("song_name").innerHTML = "Song Name = Peter Pans";
+ 
+  }
 
 }
